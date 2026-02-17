@@ -1,169 +1,295 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ZenSpace Pro 14</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apex Breeze 14</title>
 
-<style>
-:root{
-  --gold:#c9aa63;
-  --dark:#111;
-  --muted:#666;
-  --border:#e6e6e6;
-}
+  <style>
+    :root{
+      --ink:#111;
+      --muted:#6b6b6b;
+      --rule:#d9d9d9;
+      --bg:#ffffff;
 
-body{
-  margin:0;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
-  background:#f6f6f6;
-}
+      --serif: Georgia, "Times New Roman", Times, serif;
+      --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Helvetica Neue", Helvetica, sans-serif;
+    }
 
-.container{
-  max-width:1200px;
-  margin:60px auto;
-  padding:40px;
-  background:white;
-  border-radius:18px;
-  box-shadow:0 20px 60px rgba(0,0,0,.06);
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:60px;
-}
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--ink);
+      font-family:var(--sans);
+    }
 
-.brand{
-  font-weight:700;
-  letter-spacing:2px;
-  font-size:14px;
-  color:var(--muted);
-  margin-bottom:8px;
-}
+    /* Top header area (like the screenshot) */
+    .topbar{
+      border-bottom:1px solid #eee;
+      padding:18px 24px 10px;
+    }
+    .topbar-inner{
+      max-width:1100px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      gap:18px;
+    }
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+      letter-spacing:.2px;
+      font-size:20px;
+    }
+    .logo-mark{
+      width:22px;
+      height:22px;
+      display:inline-block;
+    }
+    .crumbs{
+      margin-left:18px;
+      font-size:12px;
+      color:var(--muted);
+    }
 
-.product-name{
-  font-size:40px;
-  font-weight:700;
-  margin:0 0 12px 0;
-}
+    /* Second breadcrumb line */
+    .crumbline{
+      border-top:1px solid #f0f0f0;
+      padding:10px 24px;
+      background:#fafafa;
+    }
+    .crumbline-inner{
+      max-width:1100px;
+      margin:0 auto;
+      font-size:12px;
+      color:var(--muted);
+    }
 
-.price{
-  font-family: Georgia, serif;
-  font-size:56px;
-  margin:20px 0;
-}
+    /* Main content */
+    .page{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 24px 54px;
+    }
 
-.section-title{
-  font-family: Georgia, serif;
-  font-size:24px;
-  color:var(--gold);
-  margin-top:30px;
-}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap:56px;
+      align-items:start;
+    }
 
-hr{
-  border:none;
-  border-top:1px solid var(--border);
-  margin:14px 0 24px;
-}
+    /* Product media */
+    .media{
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+    .hero{
+      border:1px solid #eee;
+      border-radius:6px;
+      padding:12px;
+      background:#fff;
+    }
+    .hero img{
+      width:100%;
+      display:block;
+      border-radius:4px;
+    }
 
-.spec{
-  margin-bottom:18px;
-}
+    .thumbs{
+      display:flex;
+      gap:10px;
+      padding:10px 10px;
+      border-top:1px solid #eee;
+      border-bottom:1px solid #eee;
+      background:#f7f7f7;
+    }
+    .thumb{
+      width:78px;
+      height:54px;
+      border:1px solid #ddd;
+      background:#fff;
+      border-radius:4px;
+      padding:4px;
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      opacity:.9;
+    }
+    .thumb img{
+      max-width:100%;
+      max-height:100%;
+      display:block;
+      border-radius:2px;
+    }
+    .thumb[aria-current="true"]{
+      outline:2px solid #bfbfbf;
+      opacity:1;
+    }
 
-.spec strong{
-  display:block;
-  margin-bottom:6px;
-  font-size:18px;
-}
+    /* Right side info */
+    .title{
+      text-align:center;
+      font-size:34px;
+      font-weight:700;
+      margin:8px 0 12px;
+    }
+    .price{
+      text-align:center;
+      font-family:var(--serif);
+      font-size:34px;
+      margin:0 0 22px;
+    }
 
-.spec span{
-  color:var(--dark);
-  font-size:17px;
-}
+    .spec-head{
+      font-size:14px;
+      font-weight:700;
+      margin:0 0 14px;
+    }
 
-button{
-  margin-top:30px;
-  padding:18px 34px;
-  border:none;
-  border-radius:12px;
-  font-size:18px;
-  font-weight:600;
-  cursor:pointer;
-  background:linear-gradient(#d9bf79, var(--gold));
-  color:white;
-  box-shadow:0 12px 30px rgba(201,170,99,.35);
-}
+    .specs{
+      width:100%;
+      max-width:520px;
+      margin:0 auto;
+      font-size:14px;
+    }
+    .row{
+      padding:10px 0 12px;
+      border-bottom:1px solid var(--rule);
+    }
+    .row:last-child{ border-bottom:1px solid var(--rule); }
+    .label{
+      font-weight:700;
+      margin-bottom:3px;
+      text-decoration:underline;
+      text-underline-offset:2px;
+    }
+    .value{
+      line-height:1.35;
+      color:#222;
+    }
 
-button:hover{
-  opacity:.9;
-}
-
-.note{
-  margin-top:10px;
-  font-size:14px;
-  color:var(--muted);
-}
-
-img{
-  width:100%;
-  border-radius:14px;
-}
-
-@media(max-width:900px){
-  .container{
-    grid-template-columns:1fr;
-  }
-}
-</style>
+    /* Responsive */
+    @media (max-width: 920px){
+      .grid{ grid-template-columns:1fr; gap:28px; }
+      .title, .price{ text-align:left; }
+      .specs{ margin:0; }
+    }
+  </style>
 </head>
 
 <body>
-
-<div class="container">
-
-  <!-- LEFT: PRODUCT IMAGE -->
-  <div>
-    <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8" alt="Laptop">
+  <!-- Header -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="logo" aria-label="Apex">
+        <!-- simple triangle mark -->
+        <svg class="logo-mark" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3L22 21H2L12 3Z" fill="#1f2d3d"/>
+        </svg>
+        Apex
+      </div>
+      <div class="crumbs">Computers &nbsp;&nbsp;›&nbsp;&nbsp; Laptops</div>
+    </div>
   </div>
 
-  <!-- RIGHT: INFO -->
-  <div>
-    <div class="brand">ZENSPACE</div>
-    <h1 class="product-name">ZenSpace Pro 14</h1>
-    <div class="price">$899.00</div>
-
-    <div class="section-title">Specifications</div>
-    <hr>
-
-    <div class="spec">
-      <strong>Memory</strong>
-      <span>8 GB DDR5-5200MT/s (SODIMM) (1×8GB)</span>
-    </div>
-
-    <div class="spec">
-      <strong>Storage</strong>
-      <span>256GB M.2 2242 PCIe® Gen4 TLC SSD (TCG Opal™)</span>
-    </div>
-
-    <div class="spec">
-      <strong>Display</strong>
-      <span>14" FHD (1920 × 1200), IPS, Anti-Glare, 300 nits, 60Hz</span>
-    </div>
-
-    <div class="spec">
-      <strong>Battery</strong>
-      <span>Up to 15 hours (50 Wh battery)</span>
-    </div>
-
-    <div class="spec">
-      <strong>Weight</strong>
-      <span>2.9 lbs</span>
-    </div>
-
-    <button>Add to Cart</button>
-    <div class="note">Battery life varies by configuration and usage.</div>
-
+  <div class="crumbline">
+    <div class="crumbline-inner">Computers &nbsp;&nbsp;›&nbsp;&nbsp; Laptops &nbsp;&nbsp;›&nbsp;&nbsp; Apex Breeze 14</div>
   </div>
 
-</div>
+  <!-- Page -->
+  <main class="page">
+    <div class="grid">
 
+      <!-- LEFT: images -->
+      <section class="media" aria-label="Product images">
+        <div class="hero">
+          <img id="heroImg" src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80" alt="Apex Breeze 14">
+        </div>
+
+        <div class="thumbs" role="listbox" aria-label="More views">
+          <button class="thumb" type="button" aria-current="true" data-src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80">
+            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=240&q=70" alt="View 1">
+          </button>
+
+          <button class="thumb" type="button" aria-current="false" data-src="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&w=1200&q=80">
+            <img src="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&w=240&q=70" alt="View 2">
+          </button>
+
+          <button class="thumb" type="button" aria-current="false" data-src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1200&q=80">
+            <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=240&q=70" alt="View 3">
+          </button>
+
+          <button class="thumb" type="button" aria-current="false" data-src="https://images.unsplash.com/photo-1509395176047-4a66953fd231?auto=format&fit=crop&w=1200&q=80">
+            <img src="https://images.unsplash.com/photo-1509395176047-4a66953fd231?auto=format&fit=crop&w=240&q=70" alt="View 4">
+          </button>
+
+          <button class="thumb" type="button" aria-current="false" data-src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80">
+            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=240&q=70" alt="View 5">
+          </button>
+        </div>
+      </section>
+
+      <!-- RIGHT: info -->
+      <section aria-label="Product details">
+        <div class="title">Apex Breeze 14</div>
+        <div class="price">$749.00</div>
+
+        <div class="specs">
+          <div class="spec-head">System Specs</div>
+
+          <div class="row">
+            <div class="label">Processor</div>
+            <div class="value">Intel&reg; Core&trade; 5 210H Processor (E-cores up to 3.60 GHz P-cores up to 4.80 GHz)</div>
+          </div>
+
+          <div class="row">
+            <div class="label">Memory</div>
+            <div class="value">8 GB DDR5-5200MT/s (SODIMM) (1&times;8GB)</div>
+          </div>
+
+          <div class="row">
+            <div class="label">Storage</div>
+            <div class="value">256GB M.2 2242 PCIe&reg; Gen4 TLC SSD (TCG Opal&trade;)</div>
+          </div>
+
+          <div class="row">
+            <div class="label">Display</div>
+            <div class="value">14&Prime; FHD display (1920 &times; 1200), IPS, Anti-Glare, Non-Touch, 45% NTSC, 300 nits (typ.), 60Hz</div>
+          </div>
+
+          <div class="row">
+            <div class="label">Battery</div>
+            <div class="value">~10 hours</div>
+          </div>
+
+          <div class="row">
+            <div class="label">Weight</div>
+            <div class="value">3.1lbs</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    const hero = document.getElementById('heroImg');
+    const thumbs = Array.from(document.querySelectorAll('.thumb'));
+
+    thumbs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const src = btn.getAttribute('data-src');
+        hero.setAttribute('src', src);
+
+        thumbs.forEach(t => t.setAttribute('aria-current', 'false'));
+        btn.setAttribute('aria-current', 'true');
+      });
+    });
+  </script>
 </body>
 </html>
