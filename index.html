@@ -1,166 +1,169 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Product Spec Card</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZenSpace Pro 14</title>
 
-  <style>
-    :root{
-      --ink:#222;
-      --muted:#666;
-      --rule:#e6e6e6;
+<style>
+:root{
+  --gold:#c9aa63;
+  --dark:#111;
+  --muted:#666;
+  --border:#e6e6e6;
+}
 
-      --serif: Georgia, "Times New Roman", Times, serif;
-      --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Helvetica Neue", Helvetica, sans-serif;
+body{
+  margin:0;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  background:#f6f6f6;
+}
 
-      --btn:#c9aa63;
-      --btn-dark:#b89443;
-      --bg1:#ffffff;
-      --bg2:#f6f6f6;
-    }
+.container{
+  max-width:1200px;
+  margin:60px auto;
+  padding:40px;
+  background:white;
+  border-radius:18px;
+  box-shadow:0 20px 60px rgba(0,0,0,.06);
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:60px;
+}
 
-    body{
-      margin:0;
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      font-family:var(--sans);
-      color:var(--ink);
-      background: radial-gradient(1200px 700px at 50% 10%, var(--bg1), var(--bg2));
-      padding:24px;
-    }
+.brand{
+  font-weight:700;
+  letter-spacing:2px;
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:8px;
+}
 
-    .card{
-      width:min(820px, 100%);
-      background:#fff;
-      border:1px solid var(--rule);
-      border-radius:16px;
-      box-shadow: 0 12px 40px rgba(0,0,0,.06);
-      padding:40px 42px;
-    }
+.product-name{
+  font-size:40px;
+  font-weight:700;
+  margin:0 0 12px 0;
+}
 
-    .price{
-      font-family:var(--serif);
-      font-size:56px;
-      letter-spacing:.2px;
-      margin:0 0 22px 0;
-      line-height:1.05;
-    }
+.price{
+  font-family: Georgia, serif;
+  font-size:56px;
+  margin:20px 0;
+}
 
-    .section-title{
-      font-family:var(--serif);
-      font-size:28px;
-      font-weight:500;
-      color:#b08b3a;
-      margin:0;
-    }
+.section-title{
+  font-family: Georgia, serif;
+  font-size:24px;
+  color:var(--gold);
+  margin-top:30px;
+}
 
-    .rule{
-      height:1px;
-      background:var(--rule);
-      margin:14px 0 26px 0;
-    }
+hr{
+  border:none;
+  border-top:1px solid var(--border);
+  margin:14px 0 24px;
+}
 
-    .specs{
-      display:grid;
-      row-gap:18px;
-    }
+.spec{
+  margin-bottom:18px;
+}
 
-    .spec{
-      display:grid;
-      row-gap:6px;
-    }
+.spec strong{
+  display:block;
+  margin-bottom:6px;
+  font-size:18px;
+}
 
-    .label{
-      font-weight:700;
-      font-size:18px;
-      letter-spacing:.2px;
-    }
+.spec span{
+  color:var(--dark);
+  font-size:17px;
+}
 
-    .value{
-      font-size:18px;
-      color:var(--ink);
-      line-height:1.55;
-    }
+button{
+  margin-top:30px;
+  padding:18px 34px;
+  border:none;
+  border-radius:12px;
+  font-size:18px;
+  font-weight:600;
+  cursor:pointer;
+  background:linear-gradient(#d9bf79, var(--gold));
+  color:white;
+  box-shadow:0 12px 30px rgba(201,170,99,.35);
+}
 
-    .value.muted{ color: var(--muted); }
+button:hover{
+  opacity:.9;
+}
 
-    .cta{
-      margin-top:26px;
-      display:flex;
-      align-items:center;
-      gap:16px;
-    }
+.note{
+  margin-top:10px;
+  font-size:14px;
+  color:var(--muted);
+}
 
-    .btn{
-      appearance:none;
-      border:0;
-      background:linear-gradient(#d9bf79, var(--btn));
-      color:#fff;
-      font-weight:700;
-      font-size:18px;
-      padding:16px 26px;
-      border-radius:10px;
-      cursor:pointer;
-      box-shadow: 0 10px 20px rgba(201,170,99,.25);
-    }
-    .btn:hover{ background:linear-gradient(#e1ca8a, var(--btn-dark)); }
-    .btn:active{ transform: translateY(1px); }
+img{
+  width:100%;
+  border-radius:14px;
+}
 
-    .note{
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.4;
-    }
-
-    /* mobile */
-    @media (max-width:520px){
-      .card{ padding:28px 22px; }
-      .price{ font-size:44px; }
-      .label,.value{ font-size:16px; }
-    }
-  </style>
+@media(max-width:900px){
+  .container{
+    grid-template-columns:1fr;
+  }
+}
+</style>
 </head>
 
 <body>
-  <main class="card">
-    <h1 class="price">$899.00</h1>
 
-    <h2 class="section-title">Specifications</h2>
-    <div class="rule"></div>
+<div class="container">
 
-    <section class="specs" aria-label="Specifications">
-      <div class="spec">
-        <div class="label">Memory</div>
-        <div class="value">8 GB DDR5-5200MT/s (SODIMM) (1×8GB)</div>
-      </div>
+  <!-- LEFT: PRODUCT IMAGE -->
+  <div>
+    <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8" alt="Laptop">
+  </div>
 
-      <div class="spec">
-        <div class="label">Storage</div>
-        <div class="value">256GB M.2 2242 PCIe® Gen4 TLC SSD (TCG Opal™)</div>
-      </div>
+  <!-- RIGHT: INFO -->
+  <div>
+    <div class="brand">ZENSPACE</div>
+    <h1 class="product-name">ZenSpace Pro 14</h1>
+    <div class="price">$899.00</div>
 
-      <div class="spec">
-        <div class="label">Display</div>
-        <div class="value">14" FHD (1920 × 1200), IPS, anti-glare, non-touch, 300 nits (typ.), 60Hz, 45% NTSC</div>
-      </div>
+    <div class="section-title">Specifications</div>
+    <hr>
 
-      <div class="spec">
-        <div class="label">Battery</div>
-        <div class="value">Up to 15 hours (50 Wh battery)</div>
-      </div>
-
-      <div class="spec">
-        <div class="label">Weight</div>
-        <div class="value">2.9 lbs</div>
-      </div>
-    </section>
-
-    <div class="cta">
-      <button class="btn">Add to Cart</button>
-      <div class="note">Battery life varies by configuration and usage.</div>
+    <div class="spec">
+      <strong>Memory</strong>
+      <span>8 GB DDR5-5200MT/s (SODIMM) (1×8GB)</span>
     </div>
-  </main>
+
+    <div class="spec">
+      <strong>Storage</strong>
+      <span>256GB M.2 2242 PCIe® Gen4 TLC SSD (TCG Opal™)</span>
+    </div>
+
+    <div class="spec">
+      <strong>Display</strong>
+      <span>14" FHD (1920 × 1200), IPS, Anti-Glare, 300 nits, 60Hz</span>
+    </div>
+
+    <div class="spec">
+      <strong>Battery</strong>
+      <span>Up to 15 hours (50 Wh battery)</span>
+    </div>
+
+    <div class="spec">
+      <strong>Weight</strong>
+      <span>2.9 lbs</span>
+    </div>
+
+    <button>Add to Cart</button>
+    <div class="note">Battery life varies by configuration and usage.</div>
+
+  </div>
+
+</div>
+
 </body>
 </html>
