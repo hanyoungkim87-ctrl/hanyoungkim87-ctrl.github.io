@@ -11,7 +11,6 @@
       --muted:#6b6b6b;
       --rule:#d9d9d9;
       --bg:#ffffff;
-
       --serif: Georgia, "Times New Roman", Times, serif;
       --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Helvetica Neue", Helvetica, sans-serif;
     }
@@ -24,7 +23,6 @@
       font-family:var(--sans);
     }
 
-    /* Top header area */
     .topbar{
       border-bottom:1px solid #eee;
       padding:18px 24px 10px;
@@ -55,7 +53,6 @@
       color:var(--muted);
     }
 
-    /* Second breadcrumb line */
     .crumbline{
       border-top:1px solid #f0f0f0;
       padding:10px 24px;
@@ -68,7 +65,6 @@
       color:var(--muted);
     }
 
-    /* Main content */
     .page{
       max-width:1100px;
       margin:0 auto;
@@ -82,7 +78,6 @@
       align-items:start;
     }
 
-    /* Product media */
     .media{
       display:flex;
       flex-direction:column;
@@ -103,35 +98,37 @@
     .thumbs{
       display:flex;
       gap:10px;
-      padding:10px 10px;
+      padding:10px;
       border-top:1px solid #eee;
       border-bottom:1px solid #eee;
       background:#f7f7f7;
+      overflow:auto;
     }
     .thumb{
-      width:78px;
-      height:54px;
+      width:88px;
+      height:62px;
       border:1px solid #ddd;
       background:#fff;
-      border-radius:4px;
+      border-radius:6px;
       padding:4px;
       cursor:pointer;
       display:grid;
       place-items:center;
       opacity:.9;
+      flex:0 0 auto;
     }
     .thumb img{
-      max-width:100%;
-      max-height:100%;
+      width:100%;
+      height:100%;
+      object-fit:cover;
       display:block;
-      border-radius:2px;
+      border-radius:4px;
     }
     .thumb[aria-current="true"]{
       outline:2px solid #bfbfbf;
       opacity:1;
     }
 
-    /* Right side info */
     .title{
       text-align:center;
       font-size:34px;
@@ -161,7 +158,6 @@
       padding:10px 0 12px;
       border-bottom:1px solid var(--rule);
     }
-    .row:last-child{ border-bottom:1px solid var(--rule); }
     .label{
       font-weight:700;
       margin-bottom:3px;
@@ -173,7 +169,6 @@
       color:#222;
     }
 
-    /* Responsive */
     @media (max-width: 920px){
       .grid{ grid-template-columns:1fr; gap:28px; }
       .title, .price{ text-align:left; }
@@ -183,7 +178,6 @@
 </head>
 
 <body>
-  <!-- Header -->
   <div class="topbar">
     <div class="topbar-inner">
       <div class="logo" aria-label="Apex">
@@ -200,40 +194,33 @@
     <div class="crumbline-inner">Computers &nbsp;&nbsp;›&nbsp;&nbsp; Laptops &nbsp;&nbsp;›&nbsp;&nbsp; Apex Breeze 14</div>
   </div>
 
-  <!-- Page -->
   <main class="page">
     <div class="grid">
 
-      <!-- LEFT: images -->
       <section class="media" aria-label="Product images">
         <div class="hero">
-          <img id="heroImg" src="images/apex-main.png" alt="Apex Breeze 14">
+          <img id="heroImg" src="apex-main.png" alt="Apex Breeze 14">
         </div>
 
         <div class="thumbs" role="listbox" aria-label="More views">
-          <button class="thumb" type="button" aria-current="true" data-src="images/apex-main.png">
-            <img src="images/apex-main.png" alt="View 1">
+          <button class="thumb" type="button" aria-current="true" data-src="apex-main.png" title="View 1">
+            <img src="apex-main.png" alt="View 1">
           </button>
 
-          <button class="thumb" type="button" aria-current="false" data-src="images/apex-1.png">
-            <img src="images/apex-1.png" alt="View 2">
+          <button class="thumb" type="button" aria-current="false" data-src="apex-1.png" title="View 2">
+            <img src="apex-1.png" alt="View 2">
           </button>
 
-          <button class="thumb" type="button" aria-current="false" data-src="images/apex-2.png">
-            <img src="images/apex-2.png" alt="View 3">
+          <button class="thumb" type="button" aria-current="false" data-src="apex-2.png" title="View 3">
+            <img src="apex-2.png" alt="View 3">
           </button>
 
-          <button class="thumb" type="button" aria-current="false" data-src="images/apex-3.png">
-            <img src="images/apex-3.png" alt="View 4">
-          </button>
-
-          <button class="thumb" type="button" aria-current="false" data-src="images/apex-4.png">
-            <img src="images/apex-4.png" alt="View 5">
+          <button class="thumb" type="button" aria-current="false" data-src="apex-3.png" title="View 4">
+            <img src="apex-3.png" alt="View 4">
           </button>
         </div>
       </section>
 
-      <!-- RIGHT: info -->
       <section aria-label="Product details">
         <div class="title">Apex Breeze 14</div>
         <div class="price">$749.00</div>
@@ -258,7 +245,7 @@
 
           <div class="row">
             <div class="label">Display</div>
-            <div class="value">14&Prime; WUXGA display (1920 &times; 1200), IPS, Anti-Glare, Non-Touch, 45% NTSC, 300 nits (typ.), 60Hz</div>
+            <div class="value">14&rdquo; WUXGA display (1920 &times; 1200), IPS, Anti-Glare, Non-Touch, 45% NTSC, 300 nits (typ.), 60Hz</div>
           </div>
 
           <div class="row">
@@ -282,9 +269,7 @@
 
     thumbs.forEach(btn => {
       btn.addEventListener('click', () => {
-        const src = btn.getAttribute('data-src');
-        hero.setAttribute('src', src);
-
+        hero.src = btn.dataset.src;
         thumbs.forEach(t => t.setAttribute('aria-current', 'false'));
         btn.setAttribute('aria-current', 'true');
       });
