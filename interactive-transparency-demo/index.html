@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f5f0">
+  <meta name="description" content="A research demo comparing three recommendation interfaces with different levels of explanation and control.">
+  <title>FORMA — Earbud Recommendation Demo</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="research-shell" id="research-shell">
+    <div class="research-intro">
+      <div><span class="eyebrow">RESEARCH PREVIEW</span><h1>Interactive Transparency</h1></div>
+      <p>Same input. Same products. Explore how explanation and control change the experience.</p>
+    </div>
+    <div class="research-toolbar">
+      <div class="condition-tabs" role="group" aria-label="Choose an experimental condition">
+        <button type="button" data-condition="none" aria-pressed="true"><span>01</span> No explanation</button>
+        <button type="button" data-condition="static" aria-pressed="false"><span>02</span> Static explanation</button>
+        <button type="button" data-condition="interactive" aria-pressed="false"><span>03</span> Explanation + control</button>
+      </div>
+      <a class="participant-link" id="participant-link" href="?condition=none&amp;mode=participant" target="_blank" rel="noopener">Open participant view <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="condition-description" id="condition-description"></div>
+  </div>
+
+  <div class="app-shell">
+    <header class="app-header">
+      <a class="brand" href="./" id="brand-link" aria-label="FORMA home"><span class="brand-icon" aria-hidden="true"><i></i><i></i><i></i></span>FORMA<span class="brand-dot">.</span></a>
+      <span class="header-label">Wireless earbud guide</span>
+      <button class="reset-button" type="button" id="reset-button" aria-label="Restart the current condition">Start over <span aria-hidden="true">↻</span></button>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <ol class="steps" aria-label="Task progress">
+        <li data-step="1" class="active" aria-current="step"><span>1</span> Criteria</li>
+        <li data-step="2"><span>2</span> Compare</li>
+        <li data-step="3"><span>3</span> Complete</li>
+      </ol>
+      <div id="screen"></div>
+    </main>
+    <footer class="app-footer"><span>FORMA · Find your fit.</span><span>Wireless earbud selection task</span></footer>
+  </div>
+
+  <section class="design-notes" id="design-notes" aria-labelledby="notes-heading">
+    <div><span class="eyebrow">DESIGN NOTES</span><h2 id="notes-heading">What this demo compares</h2></div>
+    <div class="notes-grid">
+      <article><span class="note-number">01</span><h3>A shared starting point</h3><p>In every condition, participants select battery life and sound quality as instructed. Products, prices, and the initial recommendation are identical, with default weights of 50:50.</p></article>
+      <article><span class="note-number">02</span><h3>Explanation and control</h3><p>No explanation shows the recommendation alone. Static explanation discloses the weights. Explanation + control also lets participants change those weights and receive an updated recommendation.</p></article>
+      <article><span class="note-number">03</span><h3>A responsive recommendation</h3><p>75:25 → A, 50:50 → B, 25:75 → C. This rule-based simulator ranks products by the weighted sum of their displayed scores. It is not a live AI service.</p></article>
+    </div>
+    <p class="demo-disclaimer">For research design review. No responses are collected or transmitted. Surveys, random assignment, and participant identification are not included. The interactive condition requires participants to change and apply the weights at least once before finishing. Any product can be selected in every condition.</p>
+  </section>
+  <div class="sr-only" id="announcement" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
