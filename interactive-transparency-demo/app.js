@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const VERSION = '2026-10-18-source-v2';
+  const VERSION = '2026-10-21-readable-v3';
   const REQUEST = "I'm looking for wireless earbuds with long battery life and good sound quality.";
   const validConditions = ['none', 'static', 'interactive'];
   const params = new URLSearchParams(location.search);
@@ -100,12 +100,36 @@
   function explanationPanel() {
     if (condition === 'none') return '';
     const weight = state.appliedRequestWeight;
-    // This entire source explanation and applied-weight display is identical in both conditions.
-    return `<section class="explanation-panel" aria-labelledby="explanation-heading"><div class="explanation-label">HOW WE RECOMMEND</div><h3 class="source-heading" id="explanation-heading">Two sources inform the recommendation.</h3><p class="source-intro">We combine how closely each product matches your request with its overall evaluation based on product information and customer reviews.</p><div class="source-definitions"><div><h4>Your request</h4><p>How well the product matches the long battery life and good sound quality in your request.</p></div><div><h4>Product information &amp; customer reviews</h4><p>Overall evaluation across battery life, sound quality, comfort, and call quality.</p></div></div><div class="source-weight-labels"><span>Your request <strong id="applied-request-weight">${weight}%</strong></span><span>Product information &amp; customer reviews <strong id="applied-external-weight">${100 - weight}%</strong></span></div><div class="source-weight-bar" role="img" aria-label="Applied weights: your request ${weight} percent; product information and customer reviews ${100 - weight} percent"><span style="width:${weight}%"></span><span style="width:${100 - weight}%"></span></div>${condition === 'interactive' ? `<div class="source-controls"><div class="range-heading"><label for="source-weight">Weight given to your request</label><output id="draft-weight" for="source-weight">${state.draftRequestWeight}%</output></div><input type="range" id="source-weight" min="0" max="100" step="5" value="${state.draftRequestWeight}" aria-valuetext="Your request ${state.draftRequestWeight} percent; product information and customer reviews ${100 - state.draftRequestWeight} percent" aria-describedby="range-help"><div class="range-endpoints" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div><div class="source-apply-row"><p id="range-help">Product information &amp; customer reviews: <strong id="draft-external-weight">${100 - state.draftRequestWeight}%</strong>.<br>Changes take effect after you select Update recommendations.</p><button type="button" class="primary-button apply-button" id="apply-button" ${state.draftRequestWeight === weight ? 'disabled' : ''}>Update recommendations <span aria-hidden="true">↗</span></button></div></div>` : ''}</section>`;
+    // Shared description, applied weights and layout are identical across explanation conditions.
+    return `<section class="explanation-panel" aria-labelledby="explanation-heading">
+      <div class="source-description">
+        <div class="explanation-label">HOW WE RECOMMEND</div>
+        <h3 class="source-heading" id="explanation-heading">Two sources inform the recommendation.</h3>
+        <p class="source-intro">We combine how closely each product matches your request with its overall evaluation based on product information and customer reviews.</p>
+        <div class="source-definitions">
+          <div><h4>Your request</h4><p>How well the product matches the long battery life and good sound quality in your request.</p></div>
+          <div><h4>Product information &amp; customer reviews</h4><p>Overall evaluation across battery life, sound quality, comfort, and call quality.</p></div>
+        </div>
+      </div>
+      <div class="source-settings">
+        <h4 class="weights-title">Applied weights</h4>
+        <div class="source-weight-labels"><span>Your request <strong id="applied-request-weight">${weight}%</strong></span><span>Product information &amp; customer reviews <strong id="applied-external-weight">${100 - weight}%</strong></span></div>
+        <div class="source-weight-bar" role="img" aria-label="Applied weights: your request ${weight} percent; product information and customer reviews ${100 - weight} percent"><span style="width:${weight}%"></span><span style="width:${100 - weight}%"></span></div>
+        ${condition === 'interactive' ? `<div class="source-controls">
+          <h4 class="controls-title">Adjust source weights</h4>
+          <div class="range-heading"><label for="source-weight">Weight given to your request</label><output id="draft-weight" for="source-weight">${state.draftRequestWeight}%</output></div>
+          <input type="range" id="source-weight" min="0" max="100" step="5" value="${state.draftRequestWeight}" style="--range-fill:${state.draftRequestWeight}%" aria-valuetext="Your request ${state.draftRequestWeight} percent; product information and customer reviews ${100 - state.draftRequestWeight} percent" aria-describedby="range-help">
+          <div class="range-endpoints" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div>
+          <div class="source-apply-row"><p id="range-help">Product information &amp; customer reviews: <strong id="draft-external-weight">${100 - state.draftRequestWeight}%</strong>.<br>Changes take effect after you select Update recommendations.</p>
+          <button type="button" class="primary-button apply-button" id="apply-button" ${state.draftRequestWeight === weight ? 'disabled' : ''}>Update recommendations <span aria-hidden="true">↗</span></button></div>
+          <p class="draft-status" id="draft-status" role="status">${state.draftRequestWeight === weight ? 'The displayed weights are currently applied.' : 'Changes not applied yet. Select Update recommendations to apply them.'}</p>
+        </div>` : ''}
+      </div>
+    </section>`;
   }
   function productCard(product) {
     const recommended = recommendedProduct().id === product.id;
-    return `<label class="product-card ${state.selected === product.id ? 'selected' : ''}" data-product="${product.id}"><input type="radio" name="product" value="${product.id}" aria-label="Select Product ${product.id}${recommended ? ', currently recommended' : ''}" ${state.selected === product.id ? 'checked' : ''}><div class="product-topline"><span class="product-number">WIRELESS / ${product.id}</span>${recommended ? '<span class="recommend-badge">Recommended</span>' : '<span></span>'}</div><div class="product-art">${earbudArt(product.id)}</div><div class="product-heading"><h4>Product ${product.id}</h4><span class="selection-circle" aria-hidden="true">✓</span></div><p class="product-subtitle">True wireless earbuds</p><div class="product-price">$79<small>.00</small></div><dl class="product-facts"><div><dt>Battery life</dt><dd>Up to ${product.batteryHours} hours</dd></div><div><dt>Sound quality</dt><dd>${product.sound} / 10</dd></div><div><dt>Comfort</dt><dd>${product.comfort} / 10</dd></div><div><dt>Call quality</dt><dd>${product.calls} / 10</dd></div></dl><div class="product-bottom"><span>IPX4 rated</span><span>Charging case included</span></div></label>`;
+    return `<label class="product-card ${recommended ? 'recommended' : ''} ${state.selected === product.id ? 'selected' : ''}" data-product="${product.id}"><input type="radio" name="product" value="${product.id}" aria-label="Select Product ${product.id}${recommended ? ', currently recommended' : ''}" ${state.selected === product.id ? 'checked' : ''}><div class="product-topline"><span class="product-number">WIRELESS / ${product.id}</span>${recommended ? '<span class="recommend-badge">Recommended</span>' : '<span></span>'}</div><div class="product-art">${earbudArt(product.id)}</div><div class="product-heading"><h4>Product ${product.id}</h4><span class="selection-circle" aria-hidden="true">✓</span></div><p class="product-subtitle">True wireless earbuds</p><div class="product-price">$79<small>.00</small></div><dl class="product-facts"><div><dt>Battery life</dt><dd>Up to ${product.batteryHours} hours</dd></div><div><dt>Sound quality</dt><dd>${product.sound} / 10</dd></div><div><dt>Comfort</dt><dd>${product.comfort} / 10</dd></div><div><dt>Call quality</dt><dd>${product.calls} / 10</dd></div></dl><div class="product-bottom"><span>IPX4 rated</span><span>Charging case included</span></div></label>`;
   }
   function actionCopy() {
     if (condition === 'interactive' && state.draftRequestWeight !== state.appliedRequestWeight) return 'Unapplied changes will not affect the current recommendation. You can update it or continue with your choice.';
@@ -115,7 +139,7 @@
     return state.selected !== null;
   }
   function recommendationScreen() {
-    return `<section><div class="recommendation-heading"><div><span class="eyebrow">FIND YOUR FIT</span><h2 class="screen-title">Explore your options.</h2><p class="screen-copy">Compare the products and choose the one you would buy for this task.</p></div><span class="category-pill">Wireless earbuds · 3 products</span></div>${explanationPanel()}<div class="products-caption"><h3>Available products</h3><p>All products cost $79. Ratings are fictional and use a 10-point scale.</p></div><p class="recommendation-status" id="recommendation-status" role="status">${state.appliedNotice || 'Product B is currently recommended.'}</p><fieldset style="border:0;padding:0;margin:0"><legend class="sr-only">Choose a product</legend><div class="products-grid">${products.map(productCard).join('')}</div></fieldset><div class="recommendation-actions"><div class="selection-summary"><span id="selection-summary">${state.selected ? `Product ${state.selected} selected.` : 'Which product would you choose?'}</span><div class="action-hint" id="action-hint">${actionCopy()}</div></div><button class="primary-button" id="finish-button" type="button" ${canFinish() ? '' : 'disabled'}>Confirm selection <span aria-hidden="true">→</span></button></div></section>`;
+    return `<section><div class="recommendation-heading"><div><span class="eyebrow">FIND YOUR FIT</span><h2 class="screen-title">Explore your options.</h2><p class="screen-copy">Compare the products and choose the one you would buy for this task.</p></div><span class="category-pill">Wireless earbuds · 3 products</span></div><div class="recommendation-status" id="recommendation-status" role="status"><span class="recommendation-status-label">Current recommendation</span><strong>Product ${recommendedProduct().id}</strong><span class="recommendation-update">${state.appliedNotice}</span></div>${explanationPanel()}<div class="products-caption"><h3>Available products</h3><p>All products cost $79. Ratings are fictional and use a 10-point scale.</p></div><fieldset style="border:0;padding:0;margin:0"><legend class="sr-only">Choose a product</legend><div class="products-grid">${products.map(productCard).join('')}</div></fieldset><div class="recommendation-actions"><div class="selection-summary"><span id="selection-summary">${state.selected ? `Product ${state.selected} selected.` : 'Which product would you choose?'}</span><div class="action-hint" id="action-hint">${actionCopy()}</div></div><button class="primary-button" id="finish-button" type="button" ${canFinish() ? '' : 'disabled'}>Confirm selection <span aria-hidden="true">→</span></button></div></section>`;
   }
   function completionScreen() {
     const product = products.find(item => item.id === state.selected);
@@ -188,6 +212,8 @@
       const external = 100 - state.draftRequestWeight;
       document.getElementById('draft-weight').textContent = `${state.draftRequestWeight}%`;
       document.getElementById('draft-external-weight').textContent = `${external}%`;
+      range.style.setProperty('--range-fill', `${state.draftRequestWeight}%`);
+      document.getElementById('draft-status').textContent = state.draftRequestWeight === state.appliedRequestWeight ? 'The displayed weights are currently applied.' : 'Changes not applied yet. Select Update recommendations to apply them.';
       range.setAttribute('aria-valuetext', `Your request ${state.draftRequestWeight} percent; product information and customer reviews ${external} percent`);
       document.getElementById('apply-button').disabled = state.draftRequestWeight === state.appliedRequestWeight;
       updateActions();
@@ -196,7 +222,7 @@
     document.getElementById('apply-button')?.addEventListener('click', () => {
       const previousRecommendation = recommendedProduct().id;
       state.appliedRequestWeight = state.draftRequestWeight;
-      state.appliedNotice = `Recommendations updated. Product ${recommendedProduct().id} is currently recommended.`;
+      state.appliedNotice = previousRecommendation === recommendedProduct().id ? 'Weights updated. The recommended product stays the same.' : `Updated from Product ${previousRecommendation} to Product ${recommendedProduct().id}.`;
       record('source_weights_applied', { request_weight: state.appliedRequestWeight, external_weight: 100 - state.appliedRequestWeight, previous_recommendation: previousRecommendation, recommended_product: recommendedProduct().id });
       render();
       document.getElementById('source-weight').focus({ preventScroll: true });

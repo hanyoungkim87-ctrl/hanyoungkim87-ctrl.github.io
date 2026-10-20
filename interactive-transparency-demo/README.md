@@ -1,8 +1,8 @@
 # FORMA — Interactive Transparency Demo
 
-Version: `2026-10-18-source-v2`.
+Version: `2026-10-21-readable-v3`.
 
-An English, three-condition stimulus demo comparing no explanation, static source explanation, and interactive source explanation. The existing visual design is retained. This version replaces the earlier battery-versus-sound weighting with **request-match versus overall external-evaluation weighting**.
+An English, three-condition stimulus demo comparing no explanation, static source explanation, and interactive source explanation. The FORMA visual design is retained, with larger type and clearer controls. This version replaces the earlier battery-versus-sound weighting with **request-match versus overall external-evaluation weighting**.
 
 This is a deterministic simulation for design review. Products, specifications, ratings, and source scores are fictional. It does not retrieve reviews, interpret arbitrary shopping requests, or call an AI model. It is not a complete research data-collection system.
 
@@ -71,7 +71,7 @@ The two source scores are **assigned, separate synthetic values**. They are not 
 | 50 : 50 | 7.5 | 8 | 7.5 | B |
 | 25 : 75 | 6.75 | 8 | 8.25 | C |
 
-The current recommendation badge changes; the cards do not move. A small neutral status reads “Recommendations updated.” Recommendations are simulated, and not every slider movement must change the top product.
+The current recommendation badge changes; the cards do not move. A prominent Current recommendation banner appears in the same position in every condition. After applying weights, it states the previous and current recommendation, or explains that the recommended product stays the same. Recommendations are simulated, and not every slider movement must change the top product.
 
 ## Browser-memory event log
 
@@ -98,3 +98,9 @@ The log is held only in browser memory and clears on restart, condition switch, 
 This is a three-cell design, not a full explanation × control factorial. Common request entry is shared interaction; the interactive condition adds an optional opportunity to change source weights. Actual use and task duration may vary and are logged. Responsive recommendations may change perceived fit as well as perceived control. These limitations are not resolved by the demo.
 
 A real study still needs an approved protocol, consent, secure assignment, finalized outcome and mediator measures, a protected response endpoint, and a manipulation pilot. No survey items, effects, successful manipulation, or publishability are claimed here. No private research data or original manuscripts are included.
+
+## Readability revision (2026-10-21)
+
+Core instructions and source descriptions use 18px type, with 30px applied weights, an enlarged 48px slider touch area, 56px action buttons, and darker text. The source description and settings sit side by side on wide screens and stack on narrow screens. All conditions share the same prominent, sticky current-recommendation banner, product information styling, and selection controls. Static and interactive conditions continue to share identical source descriptions and applied weights. Draft changes are clearly labeled as unapplied. Recommendation and selection styling remain distinct.
+
+This visual revision does not change the request, synthetic source scores, source weighting, condition assignment, optional interaction, or product-choice rules. Readability improvements do not establish successful experimental manipulation; that still requires a participant pilot.

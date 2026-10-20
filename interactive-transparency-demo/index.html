@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#f4f5f0">
   <meta name="description" content="A research demo comparing three recommendation interfaces with different levels of explanation and control.">
   <title>FORMA — Earbud Recommendation Demo</title>
-  <link rel="stylesheet" href="./styles.css?v=2026-10-18-source-v2">
-  <script src="./app.js?v=2026-10-18-source-v2" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=2026-10-21-readable-v3">
+  <script src="./app.js?v=2026-10-21-readable-v3" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -53,7 +53,7 @@
       <article><span class="note-number">02</span><h3>Explanation, then source control</h3><p>No explanation shows the product recommendations alone. Static and interactive conditions share the same initial source explanation and 50:50 weights. Only the interactive condition adds an optional slider and Update recommendations button.</p></article>
       <article><span class="note-number">03</span><h3>A responsive source-weight model</h3><p>The two sources are request match and overall product information and review evaluation—not battery versus sound. Request weights of 75%, 50%, and 25% recommend A, B, and C. Any product can be selected without adjusting the weights.</p></article>
     </div>
-    <p class="demo-disclaimer">Design review demo · v2026-10-18-source-v2. Products, specifications, ratings, and source scores are fictional. The source scores are assigned for this fixed scenario; no live reviews are retrieved, no free-text interpretation is performed, and no AI model is used. Scores are A: 9/6, B: 8/8, C: 6/9 for request fit / overall external evaluation. This is a three-condition design, not a full factorial experiment.</p>
+    <p class="demo-disclaimer">Design review demo · v2026-10-21-readable-v3. Products, specifications, ratings, and source scores are fictional. The source scores are assigned for this fixed scenario; no live reviews are retrieved, no free-text interpretation is performed, and no AI model is used. Scores are A: 9/6, B: 8/8, C: 6/9 for request fit / overall external evaluation. This is a three-condition design, not a full factorial experiment.</p>
     <div class="event-export"><div><h3>Preview event log</h3><p>Events and elapsed times stay in browser memory. No responses are sent to a server. Resetting, changing conditions, or reloading clears this preview. Invalid input text is not logged.</p><span id="event-count">0 events in this preview</span></div><button type="button" class="secondary-button" id="export-events">Download preview JSON <span aria-hidden="true">↓</span></button></div>
     <p class="demo-disclaimer">The event log supports checking the interaction and planning a future survey integration. This demo does not provide participant recruitment, consent, secure assignment, a validated survey, or research data collection. The participant view hides these notes, condition controls, links, and export controls.</p>
   </section>
