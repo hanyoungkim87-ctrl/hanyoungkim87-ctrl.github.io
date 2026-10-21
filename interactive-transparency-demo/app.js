@@ -1,20 +1,28 @@
 (() => {
   'use strict';
-  const VERSION = '2026-10-21-readable-v3';
+  const VERSION = '2026-10-21-study-v4';
   const REQUEST = "I'm looking for wireless earbuds with long battery life and good sound quality.";
   const validConditions = ['none', 'static', 'interactive'];
   const params = new URLSearchParams(location.search);
-  let condition = validConditions.includes(params.get('condition')) ? params.get('condition') : 'none';
+  const conditionCodes = { '1': 'none', '2': 'static', '3': 'interactive' };
+  let condition = conditionCodes[params.get('c')] || (validConditions.includes(params.get('condition')) ? params.get('condition') : 'none');
   const participantMode = params.get('mode') === 'participant';
-  // Synthetic source scores for the assigned scenario; not parsed from free text.
+  const session = participantMode ? window.StudySession.initialize({ version: VERSION, condition }) : null;
+  if (session) condition = session.condition;
+  // Fictional, fixed task. Battery is scored at 1 point/hour, capped at 10.
+  // Both source scores derive from the visible product attributes.
   const products = [
-    { id: 'A', requestFit: 9, externalEvaluation: 6, batteryHours: 12, sound: 9, comfort: 6, calls: 6 },
-    { id: 'B', requestFit: 8, externalEvaluation: 8, batteryHours: 10, sound: 8, comfort: 8, calls: 8 },
-    { id: 'C', requestFit: 6, externalEvaluation: 9, batteryHours: 8, sound: 7, comfort: 9, calls: 9 }
-  ];
+    { id: 'A', batteryHours: 10, sound: 8, comfort: 5, calls: 7 },
+    { id: 'B', batteryHours: 8, sound: 9, comfort: 10, calls: 7 },
+    { id: 'C', batteryHours: 6, sound: 10, comfort: 9, calls: 10 }
+  ].map(product => {
+    const batteryScore = Math.min(10, product.batteryHours);
+    return { ...product, requestFit: (batteryScore + product.sound) / 2,
+      externalEvaluation: (batteryScore + product.sound + product.comfort + product.calls) / 4 };
+  });
   const descriptions = {
     none: 'Condition 01 · The shared request is followed by product recommendations. No explanation of the recommendation sources is shown.',
-    static: 'Condition 02 · The recommendation explains two sources: request match and overall evaluation from product information and customer reviews. Their weights stay at 50:50.',
+    static: 'Condition 02 · The recommendation explains request match and overall product evaluation. Their weights stay at 50:50.',
     interactive: 'Condition 03 · The same explanation appears with an optional source-weight slider. Recommendations change only when the new weights are applied.'
   };
   let state;
@@ -25,22 +33,41 @@
   const announcement = document.getElementById('announcement');
   let announceTimer;
 
+  function persist() {
+    if (!participantMode || !state) return;
+    const saved = window.StudySession.save({ state: { ...state, request: normalizedRequest(state.request) === normalizedRequest(REQUEST) ? REQUEST : '' }, events, startedAtEpoch: startedAt, stepStartedAtEpoch: stepStartedAt });
+    if (saved.locked && saved.restored) {
+      state = saved.restored.state;
+      events = saved.restored.events;
+      startedAt = saved.restored.startedAtEpoch;
+      stepStartedAt = saved.restored.stepStartedAtEpoch;
+      render();
+      return false;
+    }
+    if (saved.error) {
+      const notice = document.getElementById('session-notice');
+      notice.hidden = false;
+      notice.textContent = 'Progress cannot be retained on this device. Keep this page open until you continue to the survey.';
+    }
+  }
+
   function announce(message) {
     clearTimeout(announceTimer);
     announcement.textContent = '';
     announceTimer = setTimeout(() => { announcement.textContent = message; }, 30);
   }
   function record(type, details = {}) {
-    events.push({ type, condition, step: state.step, elapsed_ms: Math.round(performance.now() - startedAt), ...details });
+    events.push({ type, condition, step: state.step, elapsed_ms: Math.max(0, Date.now() - startedAt), ...details });
     const count = document.getElementById('event-count');
     if (count) count.textContent = `${events.length} events in this preview`;
+    return persist();
   }
   function resetState(reason = 'initial_load') {
     state = { step: 1, request: '', appliedRequestWeight: 50, draftRequestWeight: 50, selected: null, appliedNotice: '' };
     events = [];
-    startedAt = performance.now();
+    startedAt = Date.now();
     stepStartedAt = startedAt;
-    record('session_started', { reason, source_weights: { request: 50, product_information_and_reviews: 50 } });
+    record('session_started', { reason, source_weights: { request: 50, overall_product_evaluation: 50 } });
   }
   function normalizedRequest(value) {
     return value.toLowerCase().replace(/[’‘']/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
@@ -53,7 +80,7 @@
   }
   function participantURL(targetCondition) {
     const url = new URL(location.href);
-    url.search = new URLSearchParams({ condition: targetCondition, mode: 'participant' }).toString();
+    url.search = new URLSearchParams({ c: String(validConditions.indexOf(targetCondition) + 1), mode: 'participant' }).toString();
     url.hash = '';
     return url.href;
   }
@@ -61,6 +88,10 @@
     document.body.classList.toggle('participant-mode', participantMode);
     document.getElementById('research-shell').hidden = participantMode;
     document.getElementById('design-notes').hidden = participantMode;
+    document.getElementById('reset-button').hidden = participantMode;
+    const sessionNotice = document.getElementById('session-notice');
+    sessionNotice.hidden = !participantMode || (!session.isPreview && window.StudySession.integrationStatus().configured);
+    sessionNotice.textContent = session?.isPreview ? 'Participant preview · responses are not submitted.' : 'Survey connection is not configured. This page is for testing only.';
     document.querySelectorAll('[data-condition]').forEach(button => {
       button.setAttribute('aria-pressed', String(button.dataset.condition === condition));
     });
@@ -73,6 +104,15 @@
     home.search = new URLSearchParams({ condition, ...(participantMode ? { mode: 'participant' } : {}) }).toString();
     home.hash = '';
     document.getElementById('brand-link').href = home.href;
+    if (participantMode) {
+      const brand = document.getElementById('brand-link');
+      brand.removeAttribute('href');
+      brand.removeAttribute('aria-label');
+      const codedURL = new URL(location.href);
+      codedURL.searchParams.delete('condition');
+      codedURL.searchParams.set('c', String(validConditions.indexOf(condition) + 1));
+      history.replaceState({}, '', codedURL);
+    }
   }
   function render(focus = false) {
     document.querySelectorAll('[data-step]').forEach(item => {
@@ -100,30 +140,34 @@
   function explanationPanel() {
     if (condition === 'none') return '';
     const weight = state.appliedRequestWeight;
-    // Shared description, applied weights and layout are identical across explanation conditions.
+    const pending = state.draftRequestWeight !== weight;
+    // Identical shared explanation, applied display, and result in both explanation conditions.
     return `<section class="explanation-panel" aria-labelledby="explanation-heading">
       <div class="source-description">
         <div class="explanation-label">HOW WE RECOMMEND</div>
-        <h3 class="source-heading" id="explanation-heading">Two sources inform the recommendation.</h3>
-        <p class="source-intro">We combine how closely each product matches your request with its overall evaluation based on product information and customer reviews.</p>
+        <h3 class="source-heading" id="explanation-heading">Two inputs. One recommendation.</h3>
+        <p class="source-intro">We combine a match score for your request with an overall product score.</p>
         <div class="source-definitions">
-          <div><h4>Your request</h4><p>How well the product matches the long battery life and good sound quality in your request.</p></div>
-          <div><h4>Product information &amp; customer reviews</h4><p>Overall evaluation across battery life, sound quality, comfort, and call quality.</p></div>
+          <div><h4><span class="source-marker" aria-hidden="true">1</span> Your request</h4><p>The average of <strong>battery-life and sound-quality scores</strong>—the two features in your request.</p></div>
+          <div><h4><span class="source-marker" aria-hidden="true">2</span> Overall product evaluation</h4><p>The average of all four scores: <strong>battery life, sound quality, comfort, and call quality</strong>.</p></div>
         </div>
+        <p class="source-rule">A source with a higher weight has more influence on which product is recommended.</p>
       </div>
       <div class="source-settings">
-        <h4 class="weights-title">Applied weights</h4>
-        <div class="source-weight-labels"><span>Your request <strong id="applied-request-weight">${weight}%</strong></span><span>Product information &amp; customer reviews <strong id="applied-external-weight">${100 - weight}%</strong></span></div>
-        <div class="source-weight-bar" role="img" aria-label="Applied weights: your request ${weight} percent; product information and customer reviews ${100 - weight} percent"><span style="width:${weight}%"></span><span style="width:${100 - weight}%"></span></div>
+        <h4 class="weights-title">Weights currently applied</h4>
+        <div class="source-weight-labels"><span>Your request <strong id="applied-request-weight">${weight}%</strong></span><span>Overall product evaluation <strong id="applied-external-weight">${100 - weight}%</strong></span></div>
+        <div class="source-weight-bar" role="img" aria-label="Applied weights: your request ${weight} percent; overall product evaluation ${100 - weight} percent"><span style="width:${weight}%"></span><span style="width:${100 - weight}%"></span></div>
         ${condition === 'interactive' ? `<div class="source-controls">
-          <h4 class="controls-title">Adjust source weights</h4>
+          <h4 class="controls-title">Adjust the balance</h4>
+          <p class="control-instruction">Move the slider, then select <strong>Update recommendations</strong>. You may also keep the current weights.</p>
           <div class="range-heading"><label for="source-weight">Weight given to your request</label><output id="draft-weight" for="source-weight">${state.draftRequestWeight}%</output></div>
-          <input type="range" id="source-weight" min="0" max="100" step="5" value="${state.draftRequestWeight}" style="--range-fill:${state.draftRequestWeight}%" aria-valuetext="Your request ${state.draftRequestWeight} percent; product information and customer reviews ${100 - state.draftRequestWeight} percent" aria-describedby="range-help">
-          <div class="range-endpoints" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div>
-          <div class="source-apply-row"><p id="range-help">Product information &amp; customer reviews: <strong id="draft-external-weight">${100 - state.draftRequestWeight}%</strong>.<br>Changes take effect after you select Update recommendations.</p>
-          <button type="button" class="primary-button apply-button" id="apply-button" ${state.draftRequestWeight === weight ? 'disabled' : ''}>Update recommendations <span aria-hidden="true">↗</span></button></div>
-          <p class="draft-status" id="draft-status" role="status">${state.draftRequestWeight === weight ? 'The displayed weights are currently applied.' : 'Changes not applied yet. Select Update recommendations to apply them.'}</p>
-        </div>` : ''}
+          <input type="range" id="source-weight" min="0" max="100" step="5" value="${state.draftRequestWeight}" style="--range-fill:${state.draftRequestWeight}%" aria-valuetext="Your request ${state.draftRequestWeight} percent; overall product evaluation ${100 - state.draftRequestWeight} percent" aria-describedby="range-help draft-status">
+          <div class="range-endpoints" aria-hidden="true"><span>More overall<br>product evaluation</span><span>More match<br>to your request</span></div>
+          <div class="source-apply-row"><p id="range-help">Overall product evaluation: <strong id="draft-external-weight">${100 - state.draftRequestWeight}%</strong></p>
+          <p class="draft-status ${pending ? 'is-pending' : ''}" id="draft-status" role="status">${pending ? 'Not applied yet. Update to use these weights.' : 'The displayed weights are currently applied.'}</p>
+          <button type="button" class="primary-button apply-button" id="apply-button" ${pending ? '' : 'disabled'}>Update recommendations <span aria-hidden="true">↗</span></button></div>
+        </div>` : `<p class="fixed-weight-note">These weights are fixed for this recommendation.</p>`}
+        <div class="panel-result" id="panel-result" role="status" aria-live="polite" aria-atomic="true"><span>Current recommendation</span><strong>Product ${recommendedProduct().id}</strong><p>${state.appliedNotice || 'Based on the currently applied weights.'}</p></div>
       </div>
     </section>`;
   }
@@ -139,11 +183,35 @@
     return state.selected !== null;
   }
   function recommendationScreen() {
-    return `<section><div class="recommendation-heading"><div><span class="eyebrow">FIND YOUR FIT</span><h2 class="screen-title">Explore your options.</h2><p class="screen-copy">Compare the products and choose the one you would buy for this task.</p></div><span class="category-pill">Wireless earbuds · 3 products</span></div><div class="recommendation-status" id="recommendation-status" role="status"><span class="recommendation-status-label">Current recommendation</span><strong>Product ${recommendedProduct().id}</strong><span class="recommendation-update">${state.appliedNotice}</span></div>${explanationPanel()}<div class="products-caption"><h3>Available products</h3><p>All products cost $79. Ratings are fictional and use a 10-point scale.</p></div><fieldset style="border:0;padding:0;margin:0"><legend class="sr-only">Choose a product</legend><div class="products-grid">${products.map(productCard).join('')}</div></fieldset><div class="recommendation-actions"><div class="selection-summary"><span id="selection-summary">${state.selected ? `Product ${state.selected} selected.` : 'Which product would you choose?'}</span><div class="action-hint" id="action-hint">${actionCopy()}</div></div><button class="primary-button" id="finish-button" type="button" ${canFinish() ? '' : 'disabled'}>Confirm selection <span aria-hidden="true">→</span></button></div></section>`;
+    return `<section><div class="recommendation-heading"><div><span class="eyebrow">FIND YOUR FIT</span><h2 class="screen-title">Explore your options.</h2><p class="screen-copy">Compare the products and choose the one you would buy for this task.</p></div><span class="category-pill">Wireless earbuds · 3 products</span></div><div class="recommendation-status" id="recommendation-status" role="status"><span class="recommendation-status-label">Current recommendation</span><strong>Product ${recommendedProduct().id}</strong><span class="recommendation-update">${state.appliedNotice}</span></div>${explanationPanel()}<div class="products-caption"><h3>Available products</h3><p>All products cost $79. Scores are fictional and out of 10. Battery score: 1 point per hour, up to 10.</p></div><fieldset style="border:0;padding:0;margin:0"><legend class="sr-only">Choose a product</legend><div class="products-grid">${products.map(productCard).join('')}</div></fieldset><div class="recommendation-actions"><div class="selection-summary"><span id="selection-summary">${state.selected ? `Product ${state.selected} selected.` : 'Which product would you choose?'}</span><div class="action-hint" id="action-hint">${actionCopy()}</div></div><button class="primary-button" id="finish-button" type="button" ${canFinish() ? '' : 'disabled'}>Confirm selection <span aria-hidden="true">→</span></button></div></section>`;
   }
   function completionScreen() {
     const product = products.find(item => item.id === state.selected);
-    return `<section class="completion-layout"><div class="completion-icon" aria-hidden="true">✓</div><span class="eyebrow">YOUR CHOICE</span><h2 class="screen-title">Your choice is complete.</h2><p class="screen-copy">You selected Product ${product.id} from the three options.</p><div class="completion-card"><div class="product-art">${earbudArt('chosen')}</div><div><span class="eyebrow">SELECTED PRODUCT</span><h3>Product ${product.id}</h3><p>True wireless earbuds · $79.00</p><p>Battery life: up to ${product.batteryHours} hours</p></div></div><div class="completion-details"><span>Final recommendation <strong>Product ${recommendedProduct().id}</strong></span></div><button class="secondary-button" type="button" id="restart-button">Try again from the start <span aria-hidden="true">↻</span></button></section>`;
+    const integration = participantMode ? window.StudySession.integrationStatus() : null;
+    const canContinue = participantMode && !session.isPreview && integration.configured;
+    const help = !participantMode ? '' : session.isPreview ? 'This is a preview. No response has been submitted to a survey.' : !integration.configured ? 'Your choice is complete on this device. The survey connection has not been configured; no response has been submitted.' : 'Select Continue to survey to pass your task results to the survey.';
+    return `<section class="completion-layout"><div class="completion-icon" aria-hidden="true">✓</div><span class="eyebrow">YOUR CHOICE</span><h2 class="screen-title">Your choice is complete.</h2><p class="screen-copy">You selected Product ${product.id} from the three options.</p><div class="completion-card"><div class="product-art">${earbudArt('chosen')}</div><div><span class="eyebrow">SELECTED PRODUCT</span><h3>Product ${product.id}</h3><p>True wireless earbuds · $79.00</p><p>Battery life: up to ${product.batteryHours} hours</p></div></div><div class="completion-details"><span>Final recommendation <strong>Product ${recommendedProduct().id}</strong></span></div>${participantMode ? `<button class="primary-button survey-button" type="button" id="continue-survey" ${canContinue ? '' : 'disabled'}>Continue to survey <span aria-hidden="true">→</span></button><p class="handoff-status" id="handoff-status" role="status">${help}</p>` : '<button class="secondary-button" type="button" id="restart-button">Try again from the start <span aria-hidden="true">↻</span></button>'}</section>`;
+  }
+  function completionPayload() {
+    const completion = events.find(item => item.type === 'selection_completed') || {};
+    const updates = events.filter(item => item.type === 'source_weights_applied');
+    return {
+      stimulus_version: VERSION,
+      selected_product: state.selected,
+      initial_recommended_product: 'B',
+      final_recommended_product: recommendedProduct().id,
+      applied_request_weight: state.appliedRequestWeight,
+      applied_external_weight: 100 - state.appliedRequestWeight,
+      draft_request_weight: state.draftRequestWeight,
+      slider_adjustment_count: events.filter(item => item.type === 'slider_adjustment').length,
+      slider_input_count: events.filter(item => item.type === 'source_weights_drafted').length,
+      update_click_count: updates.length,
+      update_clicked: updates.length > 0,
+      recommendation_changed: updates.some(item => item.previous_recommendation !== item.recommended_product),
+      total_duration_ms: completion.total_duration_ms || 0,
+      recommendation_duration_ms: completion.recommendation_duration_ms || 0,
+      events
+    };
   }
   function updateActions() {
     document.getElementById('selection-summary').textContent = state.selected ? `Product ${state.selected} selected.` : 'Which product would you choose?';
@@ -179,6 +247,7 @@
         state.request = input.value;
         error.textContent = '';
         input.removeAttribute('aria-invalid');
+        persist();
       });
       form.addEventListener('submit', event => {
         event.preventDefault();
@@ -191,9 +260,9 @@
           return;
         }
         state.request = REQUEST;
-        record('request_submitted', { request: REQUEST, duration_ms: Math.round(performance.now() - stepStartedAt) });
+        record('request_submitted', { request: REQUEST, duration_ms: Math.round(Date.now() - stepStartedAt) });
         state.step = 2;
-        stepStartedAt = performance.now();
+        stepStartedAt = Date.now();
         record('recommendation_displayed', { recommended_product: recommendedProduct().id, request_weight: state.appliedRequestWeight });
         render(true);
         announce('Recommendations are ready. Product B is currently recommended.');
@@ -213,38 +282,56 @@
       document.getElementById('draft-weight').textContent = `${state.draftRequestWeight}%`;
       document.getElementById('draft-external-weight').textContent = `${external}%`;
       range.style.setProperty('--range-fill', `${state.draftRequestWeight}%`);
-      document.getElementById('draft-status').textContent = state.draftRequestWeight === state.appliedRequestWeight ? 'The displayed weights are currently applied.' : 'Changes not applied yet. Select Update recommendations to apply them.';
-      range.setAttribute('aria-valuetext', `Your request ${state.draftRequestWeight} percent; product information and customer reviews ${external} percent`);
+      document.getElementById('draft-status').textContent = state.draftRequestWeight === state.appliedRequestWeight ? 'The displayed weights are currently applied.' : 'Not applied yet. Update to use these weights.';
+      document.getElementById('draft-status').classList.toggle('is-pending', state.draftRequestWeight !== state.appliedRequestWeight);
+      range.setAttribute('aria-valuetext', `Your request ${state.draftRequestWeight} percent; overall product evaluation ${external} percent`);
       document.getElementById('apply-button').disabled = state.draftRequestWeight === state.appliedRequestWeight;
       updateActions();
       record('source_weights_drafted', { request_weight: state.draftRequestWeight, external_weight: external });
     });
+    range?.addEventListener('change', () => record('slider_adjustment', { request_weight: state.draftRequestWeight }));
     document.getElementById('apply-button')?.addEventListener('click', () => {
       const previousRecommendation = recommendedProduct().id;
       state.appliedRequestWeight = state.draftRequestWeight;
-      state.appliedNotice = previousRecommendation === recommendedProduct().id ? 'Weights updated. The recommended product stays the same.' : `Updated from Product ${previousRecommendation} to Product ${recommendedProduct().id}.`;
-      record('source_weights_applied', { request_weight: state.appliedRequestWeight, external_weight: 100 - state.appliedRequestWeight, previous_recommendation: previousRecommendation, recommended_product: recommendedProduct().id });
+      state.appliedNotice = previousRecommendation === recommendedProduct().id ? `Weights applied. Product ${recommendedProduct().id} remains recommended.` : `Recommendation changed: Product ${previousRecommendation} → Product ${recommendedProduct().id}.`;
+      if (record('source_weights_applied', { request_weight: state.appliedRequestWeight, external_weight: 100 - state.appliedRequestWeight, previous_recommendation: previousRecommendation, recommended_product: recommendedProduct().id }) === false) return;
       render();
       document.getElementById('source-weight').focus({ preventScroll: true });
+      document.getElementById('panel-result').classList.add('just-updated');
       announce(`Recommendations updated. Product ${recommendedProduct().id} is currently recommended.`);
     });
     document.getElementById('finish-button')?.addEventListener('click', () => {
       if (!canFinish()) return;
-      record('selection_completed', { selected_product: state.selected, recommended_product: recommendedProduct().id, applied_request_weight: state.appliedRequestWeight, draft_request_weight: state.draftRequestWeight, recommendation_duration_ms: Math.round(performance.now() - stepStartedAt), total_duration_ms: Math.round(performance.now() - startedAt) });
+      if (record('selection_completed', { selected_product: state.selected, recommended_product: recommendedProduct().id, applied_request_weight: state.appliedRequestWeight, draft_request_weight: state.draftRequestWeight, recommendation_duration_ms: Math.round(Date.now() - stepStartedAt), total_duration_ms: Math.round(Date.now() - startedAt) }) === false) return;
       state.step = 3;
+      persist();
       render(true);
       announce(`Your choice of Product ${state.selected} is complete.`);
     });
     document.getElementById('restart-button')?.addEventListener('click', restart);
+    document.getElementById('continue-survey')?.addEventListener('click', async event => {
+      const button = event.currentTarget;
+      button.disabled = true;
+      document.getElementById('handoff-status').textContent = 'Passing your results to the survey…';
+      try {
+        const result = await window.StudySession.complete(completionPayload());
+        document.getElementById('handoff-status').textContent = result.message;
+        button.disabled = result.handedOff || !window.StudySession.integrationStatus().configured;
+      } catch {
+        document.getElementById('handoff-status').textContent = 'The survey did not receive your results. Your choice is retained on this device. Please try Continue to survey again.';
+        button.disabled = false;
+      }
+    });
   }
   function restart() {
+    if (participantMode) return;
     resetState('restart');
     render(true);
     announce('Back at the start. Copy and paste the assigned request to begin.');
   }
   function exportEvents() {
     if (participantMode) return;
-    const payload = { demo_version: VERSION, condition, mode: 'researcher_preview', elapsed_ms: Math.round(performance.now() - startedAt), complete: state.step === 3, selected_product: state.selected, events };
+    const payload = { ...completionPayload(), demo_version: VERSION, condition, mode: 'researcher_preview', elapsed_ms: Math.round(Date.now() - startedAt), complete: state.step === 3, selected_product: state.selected, events };
     const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }));
     const anchor = document.createElement('a');
     anchor.href = url;
@@ -256,7 +343,8 @@
   document.querySelectorAll('[data-condition]').forEach(button => button.addEventListener('click', () => {
     condition = button.dataset.condition;
     const url = new URL(location.href);
-    url.searchParams.set('condition', condition);
+    url.searchParams.delete('condition');
+    url.searchParams.set('c', String(validConditions.indexOf(condition) + 1));
     history.replaceState({}, '', url);
     updateChrome();
     resetState('condition_switch');
@@ -267,13 +355,22 @@
   document.getElementById('brand-link').addEventListener('click', event => { event.preventDefault(); restart(); });
   document.getElementById('export-events').addEventListener('click', exportEvents);
   window.addEventListener('popstate', () => {
-    const current = new URLSearchParams(location.search).get('condition');
-    condition = validConditions.includes(current) ? current : 'none';
+    if (participantMode) { updateChrome(); render(); return; }
+    const navigationParams = new URLSearchParams(location.search);
+    const current = navigationParams.get('condition');
+    condition = conditionCodes[navigationParams.get('c')] || (validConditions.includes(current) ? current : 'none');
     updateChrome();
     resetState('history_navigation');
     render();
   });
-  resetState();
+  if (session?.restored) {
+    state = session.restored.state;
+    events = session.restored.events;
+    startedAt = session.restored.startedAtEpoch;
+    stepStartedAt = session.restored.stepStartedAtEpoch;
+    if (state.step < 3) record('session_resumed');
+  } else resetState();
+  window.addEventListener('pagehide', persist);
   updateChrome();
   render();
 })();

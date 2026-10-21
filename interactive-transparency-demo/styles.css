@@ -196,3 +196,67 @@ main{padding:28px 36px 40px;min-height:0}
   .participant-mode .app-shell{margin-top:8px;min-height:calc(100vh - 16px)}
   .participant-mode main{min-height:calc(100vh - 170px)}
 }
+
+/* v4: readable manipulation and immediate feedback, shared across conditions. */
+:root{font-size:20px;--muted:#485b52}
+.screen-copy,.task-card p,.task-card .task-small,.assigned-request,.request-input{font-size:20px;line-height:1.6}
+.source-intro,.source-definitions p,.source-definitions h4,.source-rule{font-size:20px;line-height:1.55}
+.source-heading{font-size:28px;line-height:1.25}
+.source-definitions{gap:22px;margin-top:22px}
+.source-definitions h4{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.source-marker{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#dde9d7;color:#234b3c;font-size:17px;flex-shrink:0}
+.source-definitions p strong{font-weight:650;color:var(--ink)}
+.source-rule{margin:22px 0 0;padding-top:18px;border-top:1px solid #c9d8c2;color:var(--muted)}
+.weights-title,.controls-title{font-size:23px}
+.source-weight-labels{font-size:18px;line-height:1.4}
+.source-weight-labels strong{font-size:36px}
+.source-weight-bar{height:18px}
+.control-instruction{font-size:18px;line-height:1.5;margin:0 0 20px;color:var(--muted)}
+.range-heading{font-size:19px;line-height:1.4;align-items:center}
+.range-heading output{font-size:30px}
+#source-weight{height:56px;min-height:56px}
+#source-weight::-webkit-slider-thumb{width:34px;height:34px;margin-top:-12px}
+#source-weight::-moz-range-thumb{width:29px;height:29px}
+.range-endpoints{font-size:16px;line-height:1.4;gap:24px;margin:2px 0 20px}
+.range-endpoints span:last-child{text-align:right}
+.source-apply-row{gap:12px}
+.source-apply-row p{font-size:18px;line-height:1.5}
+.source-apply-row .draft-status{padding:12px 14px;border:1px solid #d2ddcd;border-radius:8px;background:#fff;margin:0;font-size:17px;color:#43554b}
+.source-apply-row .draft-status.is-pending{background:#fff5df;border-color:#b99448;color:#654717}
+.primary-button,.secondary-button,.source-apply-row .primary-button,.recommendation-actions .primary-button{font-size:19px;min-height:60px}
+.fixed-weight-note{font-size:18px;line-height:1.5;padding:16px 0;margin:14px 0 0;color:var(--muted)}
+.panel-result{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px 16px;padding:18px;margin-top:18px;background:#fff;border:2px solid #779486;border-radius:10px;scroll-margin-top:120px}
+.panel-result>span{font-size:18px;font-weight:600}
+.panel-result>strong{font-size:28px;line-height:1.2;white-space:nowrap;color:var(--teal)}
+.panel-result>p{grid-column:1/-1;font-size:18px;line-height:1.5;margin:0;color:var(--muted)}
+.panel-result.just-updated{animation:result-emphasis .55s ease-out}
+@keyframes result-emphasis{from{box-shadow:0 0 0 5px #658a6f66}to{box-shadow:0 0 0 0 transparent}}
+.recommendation-status-label,.recommendation-update{font-size:18px}
+.recommendation-status>strong{font-size:28px}
+.product-facts{font-size:18px}
+.products-caption p{font-size:16px;max-width:660px}
+.session-notice{padding:10px 24px;background:#fff5df;color:#654717;font-size:16px;line-height:1.5;border-bottom:1px solid #ddc89a}
+.participant-mode #brand-link{cursor:default}
+.handoff-status{font-size:18px;line-height:1.6;color:var(--muted);margin:18px 0 0}
+.survey-button{width:100%}
+.recommendation-actions{scroll-margin-top:100px}
+@media(max-width:1000px){.product-facts{font-size:18px}.panel-result{grid-template-columns:1fr}.panel-result>p{grid-column:1}}
+@media(max-width:600px){
+  main{padding:20px 16px 28px}.app-header{padding:0 16px}
+  .screen-copy,.recommendation-heading .screen-copy,.task-card p,.task-card .task-small,.assigned-request,.request-input{font-size:20px}
+  .assigned-request{min-height:180px}
+  .source-intro,.source-definitions p,.source-definitions h4,.source-rule{font-size:20px}
+  .source-heading{font-size:27px}.source-definitions h4{align-items:flex-start}
+  .explanation-panel{padding:20px 16px;gap:24px}
+  .source-weight-labels{font-size:18px;gap:12px}.source-weight-labels strong{font-size:36px}
+  .weights-title,.controls-title{font-size:23px}.range-heading{font-size:19px}.range-heading output{font-size:30px}
+  .source-apply-row p,.control-instruction,.fixed-weight-note{font-size:18px}
+  .source-apply-row .primary-button,.recommendation-actions .primary-button{font-size:19px}
+  .range-endpoints{font-size:16px;gap:16px}
+  .panel-result{padding:16px}.panel-result>strong{font-size:28px}.panel-result>span,.panel-result>p{font-size:18px}
+  .recommendation-status{padding:12px 14px;gap:6px 12px}.recommendation-status-label{font-size:17px}.recommendation-status>strong{font-size:26px}.recommendation-update{font-size:17px}
+  .product-facts{font-size:18px}.product-card{padding:18px 16px}.products-caption p{font-size:16px}
+  .session-notice{padding:10px 16px;font-size:16px}
+}
+@media(prefers-reduced-motion:reduce){.panel-result.just-updated{animation:none}}
+.recommendation-heading .screen-copy{font-size:20px}

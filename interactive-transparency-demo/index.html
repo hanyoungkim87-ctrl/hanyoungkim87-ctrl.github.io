@@ -6,8 +6,10 @@
   <meta name="theme-color" content="#f4f5f0">
   <meta name="description" content="A research demo comparing three recommendation interfaces with different levels of explanation and control.">
   <title>FORMA — Earbud Recommendation Demo</title>
-  <link rel="stylesheet" href="./styles.css?v=2026-10-21-readable-v3">
-  <script src="./app.js?v=2026-10-21-readable-v3" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=2026-10-21-study-v4">
+  <script src="./study-config.js?v=2026-10-21-study-v4" defer></script>
+  <script src="./study-session.js?v=2026-10-21-study-v4" defer></script>
+  <script src="./app.js?v=2026-10-21-study-v4" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -22,10 +24,10 @@
         <button type="button" data-condition="static" aria-pressed="false"><span>02</span> Static explanation</button>
         <button type="button" data-condition="interactive" aria-pressed="false"><span>03</span> Explanation + control</button>
       </div>
-      <a class="participant-link" id="participant-link" href="?condition=none&amp;mode=participant" target="_blank" rel="noopener">Open participant view <span aria-hidden="true">↗</span></a>
+      <a class="participant-link" id="participant-link" href="?c=1&amp;mode=participant" target="_blank" rel="noopener">Open participant view <span aria-hidden="true">↗</span></a>
     </div>
     <div class="condition-description" id="condition-description"></div>
-    <div class="research-links" aria-label="Direct participant links"><span>Participant views</span><a data-participant-condition="none" href="?condition=none&amp;mode=participant" target="_blank" rel="noopener">01 · No explanation ↗</a><a data-participant-condition="static" href="?condition=static&amp;mode=participant" target="_blank" rel="noopener">02 · Static explanation ↗</a><a data-participant-condition="interactive" href="?condition=interactive&amp;mode=participant" target="_blank" rel="noopener">03 · Interactive explanation ↗</a></div>
+    <div class="research-links" aria-label="Direct participant links"><span>Participant views</span><a data-participant-condition="none" href="?c=1&amp;mode=participant" target="_blank" rel="noopener">01 · No explanation ↗</a><a data-participant-condition="static" href="?c=2&amp;mode=participant" target="_blank" rel="noopener">02 · Static explanation ↗</a><a data-participant-condition="interactive" href="?c=3&amp;mode=participant" target="_blank" rel="noopener">03 · Interactive explanation ↗</a></div>
   </div>
 
   <div class="app-shell">
@@ -35,6 +37,7 @@
       <button class="reset-button" type="button" id="reset-button" aria-label="Restart the current condition">Start over <span aria-hidden="true">↻</span></button>
     </header>
 
+    <div class="session-notice" id="session-notice" hidden></div>
     <main id="main" tabindex="-1">
       <ol class="steps" aria-label="Task progress">
         <li data-step="1" class="active" aria-current="step"><span>1</span> Request</li>
@@ -51,11 +54,11 @@
     <div class="notes-grid">
       <article><span class="note-number">01</span><h3>A shared starting point</h3><p>Everyone copies and pastes the same assigned shopping request. All conditions show the same products in A–B–C order, the same prices, and the same initial recommendation: Product B.</p></article>
       <article><span class="note-number">02</span><h3>Explanation, then source control</h3><p>No explanation shows the product recommendations alone. Static and interactive conditions share the same initial source explanation and 50:50 weights. Only the interactive condition adds an optional slider and Update recommendations button.</p></article>
-      <article><span class="note-number">03</span><h3>A responsive source-weight model</h3><p>The two sources are request match and overall product information and review evaluation—not battery versus sound. Request weights of 75%, 50%, and 25% recommend A, B, and C. Any product can be selected without adjusting the weights.</p></article>
+      <article><span class="note-number">03</span><h3>A responsive source-weight model</h3><p>The two inputs are request match and overall product evaluation. Battery and sound ratings trade off across products. Request weights of 75%, 50%, and 25% recommend A, B, and C. Any product can be selected without adjusting the weights.</p></article>
     </div>
-    <p class="demo-disclaimer">Design review demo · v2026-10-21-readable-v3. Products, specifications, ratings, and source scores are fictional. The source scores are assigned for this fixed scenario; no live reviews are retrieved, no free-text interpretation is performed, and no AI model is used. Scores are A: 9/6, B: 8/8, C: 6/9 for request fit / overall external evaluation. This is a three-condition design, not a full factorial experiment.</p>
-    <div class="event-export"><div><h3>Preview event log</h3><p>Events and elapsed times stay in browser memory. No responses are sent to a server. Resetting, changing conditions, or reloading clears this preview. Invalid input text is not logged.</p><span id="event-count">0 events in this preview</span></div><button type="button" class="secondary-button" id="export-events">Download preview JSON <span aria-hidden="true">↓</span></button></div>
-    <p class="demo-disclaimer">The event log supports checking the interaction and planning a future survey integration. This demo does not provide participant recruitment, consent, secure assignment, a validated survey, or research data collection. The participant view hides these notes, condition controls, links, and export controls.</p>
+    <p class="demo-disclaimer">Design review demo · v2026-10-21-study-v4. Products and ratings are fictional. Battery is scored at one point per hour, capped at 10. Request match averages battery and sound; overall evaluation averages all four displayed attributes. No live reviews, free-text interpretation, or AI model are used. The initial recommendation is B; request weights of 75%, 50%, and 25% recommend A, B, and C. This is a three-condition design.</p>
+    <div class="event-export"><div><h3>Preview event log</h3><p>Researcher previews stay in memory and reset when the condition changes. Participant sessions with an ID retain progress and the completed choice on this device. Survey transfer requires the settings and Qualtrics bridge described in the setup guide.</p><span id="event-count">0 events in this preview</span></div><button type="button" class="secondary-button" id="export-events">Download preview JSON <span aria-hidden="true">↓</span></button></div>
+    <p class="demo-disclaimer">Survey integration is disabled until a real destination is configured. Local retention is not server storage. See <a href="./QUALTRICS_SETUP.md">Qualtrics setup</a>. Participant views hide researcher controls and restart links. A pilot must still establish manipulation strength; responsive recommendations can affect perceived fit as well as control.</p>
   </section>
   <div class="sr-only" id="announcement" aria-live="polite" aria-atomic="true"></div>
 </body>

@@ -1,106 +1,91 @@
 # FORMA — Interactive Transparency Demo
 
-Version: `2026-10-21-readable-v3`.
+Version: `2026-10-21-study-v4`.
 
-An English, three-condition stimulus demo comparing no explanation, static source explanation, and interactive source explanation. The FORMA visual design is retained, with larger type and clearer controls. This version replaces the earlier battery-versus-sound weighting with **request-match versus overall external-evaluation weighting**.
+English three-condition recommender stimulus. Existing branding and the assigned copy/paste task are retained. This revision improves typography, shows update feedback next to the controls, corrects product tradeoffs, and prepares participant resume and Qualtrics handoff. It does not establish successful manipulation or server-side survey saving.
 
-This is a deterministic simulation for design review. Products, specifications, ratings, and source scores are fictional. It does not retrieve reviews, interpret arbitrary shopping requests, or call an AI model. It is not a complete research data-collection system.
+## Live demo
 
-## Open and publish
+https://hanyoungkim87-ctrl.github.io/interactive-transparency-demo/
 
-Live route: https://hanyoungkim87-ctrl.github.io/interactive-transparency-demo/
+Participant previews (no participant ID, no survey submission):
 
-Repository: `hanyoungkim87-ctrl/hanyoungkim87-ctrl.github.io`, folder `interactive-transparency-demo/`. Update `index.html`, `styles.css`, `app.js`, and this `README.md` there. No other site files need changing. The script and stylesheet URLs include a version parameter to refresh cached assets. This source version should be verified on the live route after publication.
+- `?c=1&mode=participant` — no explanation
+- `?c=2&mode=participant` — static explanation
+- `?c=3&mode=participant` — interactive explanation
 
-The files also run by opening `index.html` directly. No dependencies, build process, external fonts, or remote assets are required. Clipboard copying may be unavailable under local-file or restricted-browser access; the manual copy fallback remains available.
+Legacy descriptive condition parameters still work; participant URLs are normalized to codes. Codes obscure names, not assignment or security. Randomize and retain condition in Qualtrics. Participant identity can be supplied through `PROLIFIC_PID`, `ResponseID`, or `pid`. See [QUALTRICS_SETUP.md](QUALTRICS_SETUP.md).
 
-The default screen provides researcher condition buttons, a participant link for each condition, design notes, and event export. Each condition switch restarts the task and clears the current event log.
+The repository is `hanyoungkim87-ctrl/hanyoungkim87-ctrl.github.io`; only the `interactive-transparency-demo/` folder belongs to this project. No build dependencies or remote fonts/assets are used. The system font stack adapts to the device. Update the version query on assets when releasing.
 
-Participant links:
+## Common task and conditions
 
-- `?condition=none&mode=participant`
-- `?condition=static&mode=participant`
-- `?condition=interactive&mode=participant`
-
-Invalid condition values fall back to `none`. Participant mode hides condition names, researcher controls, design notes, and export controls. URL parameters are demonstration controls, not secure experiment assignment.
-
-## Shared shopping task
-
-All conditions assign the same goal and supply the same sentence:
+Everyone copies and pastes:
 
 > I'm looking for wireless earbuds with long battery life and good sound quality.
 
-Participants copy the supplied request and paste it into a blank input field. The Copy request button copies only to the clipboard; it never fills the input. If copying is denied, the supplied text is selected and manual copy instructions appear. Submission accepts the fixed word sequence with differences in capitalization, punctuation, apostrophes, or spacing. Other wording receives a clear instruction to use the supplied sentence. No general natural-language understanding is implied.
+The goal is assigned, not a statement of actual personal preference. Copy request writes only the supplied text to the clipboard and never autofills or reads the user's clipboard. A manual-copy fallback is available. Case, punctuation, apostrophes, and spacing may differ; unrelated input is rejected. Arbitrary invalid input is not persisted.
 
-This is an assigned task, not a claim about participants' real shopping preferences. The same input interaction appears in every condition.
+All three conditions share the task, product order A–B–C, $79 prices, default recommendation B, product information, current-recommendation banner, and free choice of any product.
 
-## Conditions
+| Condition | Source explanation | Weight adjustment |
+| --- | --- | --- |
+| No explanation | None | None |
+| Static | Both input definitions, combination rule, applied 50:50 weights | Fixed |
+| Interactive | Exactly the same explanation and initial applied weights | Optional 0–100 slider in steps of 5, followed by Update recommendations |
 
-| Condition | Recommendation screen |
-| --- | --- |
-| No explanation | The three product cards and current recommendation; no algorithm-source panel. |
-| Static explanation | The same products, plus an explanation of both sources and a fixed 50:50 applied-weight display. |
-| Interactive explanation | The exact same initial explanation and applied-weight display, plus an optional native slider and Update recommendations button. |
+The two inputs are request match and overall product evaluation. They are two evaluations of the same products, not independent review datasets. No customer reviews are claimed or retrieved. The shared explanation says the request score averages battery and sound, while the overall score averages all four displayed attributes. The slider adjusts the relative weights of these two evaluations, not battery versus sound directly.
 
-The shared source explanation distinguishes:
+The controls state what to do without asserting that participants feel empowered. Adjustment is optional and no product choice is blocked based on agreement with the recommendation. A slider movement changes only draft weights. The pending notice is explicit. Apply updates the weights and recommendation while preserving the selected product. A result box immediately below the Update button gives the new product and previous-to-current transition; it also reports when the top product stays the same. A matching initial result box is shown in static. A sticky common banner remains visible while browsing the products.
 
-- **Your request:** match to the long battery life and good sound quality in the assigned request.
-- **Product information & customer reviews:** overall evaluation across battery life, sound quality, comfort, and call quality.
+## Coherent fictional product model
 
-The slider sets the weight of the request source from 0% to 100% in 5-point increments. The external source receives the remainder. Draft and applied weights are separate: moving the slider updates only the draft readout. The recommendation changes after Update recommendations. The applied bar always describes the currently applied weights.
+Battery receives one point per hour, capped at 10; this conversion is disclosed identically in all conditions. Other displayed attributes are out of 10.
 
-No adjustment is required. Participants can select any product and finish from the default setting in every condition. If a draft change has not been applied, completion uses the existing recommendation; the interface states this. Product choice remains selected when a recommendation updates. No extra persuasive rationale or agency language appears only in the interactive condition.
-
-## Synthetic product model
-
-The same cards remain in A–B–C order, with all products priced at $79.00. Product A has stronger battery and sound attributes but lower comfort and call-quality ratings. Product C has stronger comfort and call quality but less battery life and lower sound quality. Product B is balanced. All attributes are synthetic scenario material.
-
-| Product | Battery life | Sound | Comfort | Call quality | Request-fit score | Overall external-evaluation score |
+| Product | Battery hours | Sound | Comfort | Calls | Request match | Overall evaluation |
 | --- | --- | --- | --- | --- | --- | --- |
-| A | Up to 12 hours | 9/10 | 6/10 | 6/10 | 9 | 6 |
-| B | Up to 10 hours | 8/10 | 8/10 | 8/10 | 8 | 8 |
-| C | Up to 8 hours | 7/10 | 9/10 | 9/10 | 6 | 9 |
+| A | 10 | 8 | 5 | 7 | 9.00 | 7.50 |
+| B | 8 | 9 | 10 | 7 | 8.50 | 8.50 |
+| C | 6 | 10 | 9 | 10 | 8.00 | 8.75 |
 
-The two source scores are **assigned, separate synthetic values**. They are not battery and sound scores renamed, not empirical review averages, and not scores calculated by parsing the submitted text. They model two ways of evaluating the same fictional products. The source scores are disclosed in researcher notes and omitted from participant product cards.
+`requestMatch = (batteryScore + sound) / 2`
 
-`score = requestFit × requestWeight + externalEvaluation × (1 − requestWeight)`
+`overallEvaluation = (batteryScore + sound + comfort + calls) / 4`
 
-| Request : external | A | B | C | Recommended |
+`finalScore = requestMatch * requestWeight + overallEvaluation * (1 - requestWeight)`
+
+| Request weight | A score | B score | C score | Recommended |
 | --- | --- | --- | --- | --- |
-| 75 : 25 | 8.25 | 8 | 6.75 | A |
-| 50 : 50 | 7.5 | 8 | 7.5 | B |
-| 25 : 75 | 6.75 | 8 | 8.25 | C |
+| 75% | 8.625 | 8.500 | 8.1875 | A |
+| 50% | 8.250 | 8.500 | 8.3750 | B |
+| 25% | 7.875 | 8.500 | 8.5625 | C |
 
-The current recommendation badge changes; the cards do not move. A prominent Current recommendation banner appears in the same position in every condition. After applying weights, it states the previous and current recommendation, or explains that the recommended product stays the same. Recommendations are simulated, and not every slider movement must change the top product.
+Battery and sound trade off across all products. B has the highest comfort rating and is not the middle alternative on every attribute. This removes the earlier task-relative dominance, but responsive recommendations can still affect perceived fit. This three-cell study estimates the interface's total effect; it does not isolate an agency mechanism from output fit. Post-treatment recommendation–choice agreement should not be treated as a routine adjustment covariate.
 
-## Browser-memory event log
+## Readability
 
-The demo records the current condition, elapsed times, fixed-request submission, validation outcomes, source-weight drafts and applications, recommendations, product selection, and completion. Submission and recommendation-stage durations are included. The canonical assigned sentence is logged only after validation; rejected input contents are never logged. No participant identifiers, cookies, local storage, or server requests are used.
+Core instructions and explanation text are 20px on desktop and mobile, headings 27–36px, applied percentages 36px, controls 18–19px, and button targets at least 60px high. The native slider has a 56px target and 34px thumb in Chromium. Product facts are 18px. Secondary labels are 14–17px. Focus indicators, contrast, screen-reader announcements, and reduced-motion preferences are retained. Common text and product styling are identical across conditions.
 
-The log is held only in browser memory and clears on restart, condition switch, or page reload. In researcher view, Download preview JSON exports the current preview for inspecting the event structure and planning a future Qualtrics or other survey integration. Participant view has no export control. This feature does not provide persistent participant data collection.
+## Participant operations
 
-## Manual QA
+Participants have no restart button, completion retry link, or clickable brand reset. Sessions with an ID retain progress and the completed choice in localStorage under a stable study-and-participant key. Refresh restores the same condition and choice. This is local resume, not durable server storage or tamper-proof identity verification. Clearing storage or changing devices bypasses local retention; the survey must manage assignment and duplicate responses.
 
-1. Open each participant URL. Check that no condition controls or researcher notes appear.
-2. Check the same assigned request, empty input, and task instructions in all three conditions. Empty or changed wording should fail; the supplied sentence should pass. Verify copy-and-paste and the manual clipboard fallback.
-3. Confirm A–B–C order, identical products and prices, and initial recommendation B in every condition.
-4. Confirm no source panel in `none`; compare the initial static and interactive explanation text and 50:50 applied display for exact equality.
-5. In interactive, move the request slider to 75. Before updating, B must remain recommended and the applied weights must remain 50:50. Update: A becomes recommended and the applied weights become 75:25.
-6. Apply 25:75 and then 50:50. Recommendations should become C and B. Moving the slider without applying must not alter recommendations.
-7. In all conditions, select any product and complete. In interactive, also complete without ever changing weights and with an unapplied draft. The chosen product must be preserved.
-8. Switch conditions or restart. Request, choice, weights, progress, and log should reset.
-9. Use keyboard-only navigation for copy, input, slider arrows, product radios, and completion. Check narrow mobile layouts, visible focus, and neutral status announcements.
-10. In researcher view, download JSON and confirm condition, events, applied versus draft weights, recommendations, choice, and durations. Reload and confirm the old log is gone.
-11. After publishing, verify the versioned script and stylesheet load from the live GitHub Pages URL.
+Researcher mode retains resets, condition switches, and JSON export. No-ID participant previews intentionally do not submit data. Completed participant screens provide Continue to survey, enabled only for an identified session with a configured route.
 
-## Research limitations
+The survey payload includes participant and condition identifiers, stimulus version, chosen product, initial/final recommendation, applied weights, slider-adjustment and raw-input counts, update count/flag, whether recommendation changed, and total/recommendation-stage elapsed time. Slider adjustment counts committed native `change` events; raw `input` events are separate and must not be interpreted as separate drag gestures. Time is wall-clock elapsed, including pauses and reloads. It is not active-attention time.
 
-This is a three-cell design, not a full explanation × control factorial. Common request entry is shared interaction; the interactive condition adds an optional opportunity to change source weights. Actual use and task duration may vary and are logged. Responsive recommendations may change perceived fit as well as perceived control. These limitations are not resolved by the demo.
+`study-config.js` is deliberately disabled until the researcher supplies the actual Qualtrics domain or redirect URL. `qualtrics-bridge.js` is a question-JavaScript template. The setup guide specifies Embedded Data fields, origin checks, matching IDs/condition, and end-to-end response verification. An iframe acknowledgement confirms receipt by the survey page; a redirect only passes fields. Neither alone proves that Qualtrics saved the response.
 
-A real study still needs an approved protocol, consent, secure assignment, finalized outcome and mediator measures, a protected response endpoint, and a manipulation pilot. No survey items, effects, successful manipulation, or publishability are claimed here. No private research data or original manuscripts are included.
+## Verification
 
-## Readability revision (2026-10-21)
+Run JavaScript syntax checks and the session tests supplied with the integration. Browser checks should cover:
 
-Core instructions and source descriptions use 18px type, with 30px applied weights, an enlarged 48px slider touch area, 56px action buttons, and darker text. The source description and settings sit side by side on wide screens and stack on narrow screens. All conditions share the same prominent, sticky current-recommendation banner, product information styling, and selection controls. Static and interactive conditions continue to share identical source descriptions and applied weights. Draft changes are clearly labeled as unapplied. Recommendation and selection styling remain distinct.
+1. Same request, initially empty field, valid/invalid wording, and initial B in all conditions.
+2. No explanation/slider in condition 1; identical shared explanation in 2 and 3.
+3. Draft 75 keeps applied50/B until Apply; Apply gives75/A;25 givesC;50 givesB. Selection survives all updates.
+4. Choose any product and finish with no adjustment, or with an unapplied draft.
+5. Participant has no reset paths; same-ID refresh retains weights, logs, condition, and completed selection. A changed condition query cannot reassign that ID locally.
+6. Desktop and 390px/320px mobile readability, no horizontal overflow, and adjacent update result.
+7. Survey receipt, retry, and saved response checks in the actual configured Qualtrics survey before recruitment.
 
-This visual revision does not change the request, synthetic source scores, source weighting, condition assignment, optional interaction, or product-choice rules. Readability improvements do not establish successful experimental manipulation; that still requires a participant pilot.
+Products and scores are synthetic. No AI model or unrestricted natural-language processing is used. Manipulation strength must be established with a participant pilot; no effects or publishability are guaranteed.
