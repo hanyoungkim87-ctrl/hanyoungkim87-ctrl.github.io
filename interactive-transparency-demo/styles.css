@@ -273,3 +273,4 @@ main{padding:28px 36px 40px;min-height:0}
   .steps li span{width:20px;height:20px;font-size:12px}
   .steps li:not(:last-child):after{display:none}
 }
+@media(max-width:380px){.recommendation-status-label{font-size:14px}}
